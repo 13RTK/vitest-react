@@ -1,30 +1,46 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import TogglePurple from '../../src/components/TogglePurple';
+import { useState } from 'react';
 
-describe('TogglePurple render test', () => {
-  const isPurple = false;
-  function setIsPurple(isPurple: boolean) {}
+function TogglePurpleMock() {
+  const [isPurple, setIsPurple] = useState<boolean>(false);
 
+  return <TogglePurple isPurple={isPurple} setIsPurple={setIsPurple} />;
+}
+
+describe('TogglePurple', () => {
   beforeEach(() => {
-    render(<TogglePurple isPurple={isPurple} setIsPurple={setIsPurple} />);
+    render(<TogglePurpleMock />);
   });
 
-  it('should render the checkbox and the checkbox should not be checked', () => {
-    const checkbox = screen.getByRole('checkbox');
+  describe('render test', () => {
+    it('should render the checkbox and the checkbox should not be checked', () => {
+      const checkbox = screen.getByRole('checkbox');
 
-    // expect(element).matcher
-    expect(checkbox).toBeInTheDocument();
-    expect(checkbox).not.toBeChecked();
+      // expect(element).matcher
+      expect(checkbox).toBeInTheDocument();
+      expect(checkbox).not.toBeChecked();
 
-    // automatically call cleanup to unmount the component which rendered before
+      // automatically call cleanup to unmount the component which rendered before
+    });
+
+    it('should render the label with purple text', () => {
+      const label = screen.getByText(/purple/i);
+
+      // expect(element).matcher;
+      expect(label).toBeInTheDocument();
+    });
   });
 
-  it('should render the label with purple text', () => {
-    const label = screen.getByText(/purple/i);
+  describe('user interaction', () => {
+    it('should be checked after user click', async () => {
+      const checkbox = screen.getByRole('checkbox');
+      const user = userEvent.setup();
 
-    // screen.debug();
+      await user.click(checkbox);
 
-    // expect(element).matcher;
-    expect(label).toBeInTheDocument();
+      expect(checkbox).toBeChecked();
+    });
   });
 });
