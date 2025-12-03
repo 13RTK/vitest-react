@@ -11,5 +11,10 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./tests/setup.ts'],
+    coverage: {
+      enabled: true,
+      provider: 'v8', // or 'istanbul'
+      include: ['src/**/*.{ts,tsx}'],
+    },
   },
 });
