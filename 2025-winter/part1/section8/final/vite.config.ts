@@ -14,7 +14,7 @@ export default defineConfig({
     coverage: {
       enabled: true,
       provider: 'v8', // or 'istanbul'
-      include: ['src/**/*.{ts,tsx}'],
+      include: ['src/components/*.{ts,tsx}'],
     },
   },
 });
