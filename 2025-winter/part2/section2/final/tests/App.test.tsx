@@ -1,17 +1,19 @@
 import App from '@/App';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+
+import { render } from 'vitest-browser-react';
+import { userEvent } from 'vitest/browser';
 
 it('should display correct color after user click', async () => {
   // Arrange
-  render(<App />);
-  const button = screen.getByRole('button');
-  const user = userEvent.setup();
+  const renderResult = await render(<App />);
+  const button = renderResult.getByRole('button');
 
   // Act
-  await user.click(button);
-  const backgroundColor = window.getComputedStyle(button).backgroundColor;
+  await userEvent.click(button);
+  const backgroundColor = window.getComputedStyle(
+    button.element()
+  ).backgroundColor;
 
   // Assert
-  expect(backgroundColor).toBe('rgba(245, 34, 45)');
+  expect(backgroundColor).toBe('rgb(245, 34, 45)');
 });

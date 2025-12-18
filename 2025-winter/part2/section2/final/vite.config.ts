@@ -2,6 +2,7 @@
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { playwright } from '@vitest/browser-playwright';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'node:url';
 
@@ -10,8 +11,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./tests/setup.ts'],
+    browser: {
+      enabled: true,
+      provider: playwright(),
+      // https://vitest.dev/config/browser/playwright
+      instances: [{ browser: 'chromium' }],
+    },
   },
   resolve: {
     alias: {
