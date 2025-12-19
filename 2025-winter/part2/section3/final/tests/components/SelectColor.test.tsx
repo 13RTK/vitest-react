@@ -2,7 +2,6 @@ import { render } from 'vitest-browser-react';
 import SelectColor from '../../src/components/SelectColor';
 import { useState } from 'react';
 import { userEvent } from 'vitest/browser';
-import { screen } from '@testing-library/react';
 
 function SelectColorMock() {
   const [textColor, setTextColor] = useState<string>('');
@@ -39,7 +38,7 @@ describe('SelectColor', () => {
 
       await userEvent.click(select);
 
-      const options = screen.getAllByRole('option');
+      const options = getByRole('option').elements();
       expect(options).toHaveLength(3);
     });
 
