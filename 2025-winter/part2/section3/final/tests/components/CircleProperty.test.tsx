@@ -1,7 +1,7 @@
-import { cleanup, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import CircleProperty from '../../src/components/CircleProperty';
+import { userEvent } from 'vitest/browser';
 import { useState } from 'react';
+import { render } from 'vitest-browser-react';
 
 describe('CircleProperty', () => {
   function CirclePropertyMock({
@@ -18,43 +18,46 @@ describe('CircleProperty', () => {
     );
   }
 
-  beforeEach(() => {
-    render(<CirclePropertyMock />);
-  });
+  async function renderComponent(labelText?: string) {
+    return await render(<CirclePropertyMock>{labelText}</CirclePropertyMock>);
+  }
 
   describe('render test', () => {
-    it('should render the input correctly', () => {
-      const input = screen.getByRole('spinbutton');
+    it('should render the input correctly', async () => {
+      const { getByRole } = await renderComponent();
 
-      expect(input).toBeInTheDocument();
+      const input = getByRole('spinbutton');
+
+      await expect.element(input).toBeInTheDocument();
     });
 
-    it('should render the label with correct text', () => {
+    it('should render the label with correct text', async () => {
       // Arrange
       const labelText = 'alex';
-      render(<CirclePropertyMock>{labelText}</CirclePropertyMock>);
+      const { getByText } = await renderComponent(labelText);
 
       // Act
-      const label = screen.getByText(labelText);
+      const label = getByText(labelText);
 
       // Assert
-      expect(label).toBeInTheDocument();
+      await expect.element(label).toBeInTheDocument();
     });
   });
 
   describe('user interaction', () => {
     it('should display the correct number in the input after user type', async () => {
       // Arrange
-      const input = screen.getByRole('spinbutton');
+      const renderResult = await renderComponent();
+      const input = renderResult.getByRole('spinbutton');
       const inputNumber = 30;
-      const user = userEvent.setup();
 
       // Act
-      await user.click(input);
-      await user.keyboard(inputNumber.toString());
+      await userEvent.clear(input);
+      await userEvent.click(input);
+      await userEvent.keyboard(inputNumber.toString());
 
       // Assert
-      expect(input).toHaveValue(inputNumber);
+      await expect.element(input).toHaveValue(inputNumber);
     });
   });
 });

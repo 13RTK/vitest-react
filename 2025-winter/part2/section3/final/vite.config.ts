@@ -1,5 +1,6 @@
 /// <reference types="vitest/config" />
 
+import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -8,13 +9,18 @@ export default defineConfig({
   plugins: [react()],
 
   test: {
-    environment: 'jsdom',
     globals: true,
-    setupFiles: ['./tests/setup.ts'],
     coverage: {
       enabled: true,
       provider: 'v8', // or 'istanbul'
       include: ['src/components/*.{ts,tsx}'],
+    },
+
+    browser: {
+      enabled: true,
+      provider: playwright(),
+      // https://vitest.dev/config/browser/playwright
+      instances: [{ browser: 'chromium' }],
     },
   },
 });

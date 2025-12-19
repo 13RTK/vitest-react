@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render } from 'vitest-browser-react';
 import SelectColor from '../../src/components/SelectColor';
 import { useState } from 'react';
+import { userEvent } from 'vitest/browser';
+import { screen } from '@testing-library/react';
 
 function SelectColorMock() {
   const [textColor, setTextColor] = useState<string>('');
@@ -9,36 +10,36 @@ function SelectColorMock() {
   return <SelectColor textColor={textColor} setTextColor={setTextColor} />;
 }
 
+async function renderComponent() {
+  return await render(<SelectColorMock />);
+}
+
 describe('SelectColor', () => {
   describe('render test', () => {
-    it('should render the select element correctly', () => {
-      render(<SelectColorMock />);
+    it('should render the select element correctly', async () => {
+      const { getByRole } = await renderComponent();
 
-      const select = screen.getByRole('combobox');
+      const select = getByRole('combobox');
 
-      expect(select).toBeInTheDocument();
+      await expect.element(select).toBeInTheDocument();
     });
 
-    it('should render the label element with correct text', () => {
-      render(<SelectColorMock />);
+    it('should render the label element with correct text', async () => {
+      const { getByText } = await renderComponent();
 
-      const label = screen.getByText(/text color/i);
-
-      expect(label).toBeInTheDocument();
+      const label = getByText(/text color/i);
+      await expect.element(label).toBeInTheDocument();
     });
   });
 
   describe('user interaction', () => {
     it('should display the correct items after user click the select', async () => {
-      render(<SelectColorMock />);
+      const { getByRole } = await renderComponent();
+      const select = getByRole('combobox');
 
-      const select = screen.getByRole('combobox');
-      const user = userEvent.setup();
-
-      await user.click(select);
+      await userEvent.click(select);
 
       const options = screen.getAllByRole('option');
-
       expect(options).toHaveLength(3);
     });
 
@@ -49,14 +50,13 @@ describe('SelectColor', () => {
     ])(
       'should display the $label after user click the $label option',
       async ({ optionValue }) => {
-        render(<SelectColorMock />);
+        const { getByRole } = await renderComponent();
 
-        const select = screen.getByRole('combobox');
+        const select = getByRole('combobox');
         const user = userEvent.setup();
-
         await user.selectOptions(select, optionValue);
 
-        expect(select).toHaveValue(optionValue);
+        await expect.element(select).toHaveValue(optionValue);
       }
     );
     // it('should display the black text after user click the black option', async () => {
