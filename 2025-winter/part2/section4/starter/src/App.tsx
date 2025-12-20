@@ -1,8 +1,8 @@
-import Navbar from '@/component/Navbar';
-import NoteList from './component/NoteList';
+import Navbar from '@/components/Navbar';
+import NoteList from './components/NoteList';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
-import FloatingButton from './component/FloatingButton';
+import FloatingButton from './components/FloatingButton';
 
 function App() {
   const queryClient = new QueryClient();
