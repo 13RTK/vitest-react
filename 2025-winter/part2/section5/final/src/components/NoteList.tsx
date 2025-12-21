@@ -29,12 +29,12 @@ function NoteList() {
 
   if (isSuccess) {
     return (
-      <>
+      <main>
         {notes?.map((note: Note) => (
           <NoteItem key={note.id} note={note} />
         ))}
         <EditModal />
-      </>
+      </main>
     );
   }
 }
