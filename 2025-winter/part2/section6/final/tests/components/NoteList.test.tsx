@@ -4,9 +4,17 @@ import type { Note } from '@/types/Note';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from 'vitest-browser-react';
 
+vi.mock('@/services/apiNote', { spy: true });
+
 describe('NoteList', () => {
   async function renderComponent() {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
 
     return render(
       <QueryClientProvider client={queryClient}>
@@ -32,7 +40,6 @@ describe('NoteList', () => {
             'Yes, you can reset your password by clicking the "Forgot Password" link in the login form.',
         },
       ];
-      vi.mock('@/services/apiNote', { spy: true });
       vi.mocked(getNotes).mockResolvedValue(mockNotes);
       const { getByRole } = await renderComponent();
 
@@ -48,6 +55,30 @@ describe('NoteList', () => {
       // Assert
       expect(noteItems).toHaveLength(mockNotes.length);
       expect(getNotes).toHaveBeenCalled();
+    });
+
+    it('should render the skeleton while the data is fetching', async () => {
+      // Arrange
+      vi.mocked(getNotes).mockImplementation(() => {
+        return new Promise(() => {});
+      });
+      const { getByRole } = await renderComponent();
+
+      // Act
+      const skeleton = getByRole('progressbar');
+
+      // Assert
+      await expect.element(skeleton).toBeInTheDocument();
+    });
+
+    it('should display the error message while the api function throw error', async () => {
+      const errorMessage = 'Error from vitest';
+      vi.mocked(getNotes).mockRejectedValue(new Error(errorMessage));
+      const { getByRole } = await renderComponent();
+
+      const alert = getByRole('alert');
+
+      await expect.element(alert).toBeInTheDocument();
     });
   });
 });
