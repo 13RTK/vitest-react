@@ -1,9 +1,11 @@
 import NoteList from '@/components/NoteList';
-import { getNotes } from '@/services/apiNote';
-import type { Note } from '@/types/Note';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from 'vitest-browser-react';
 import { worker } from '../mocks/server';
+import { delay, http, HttpResponse } from 'msw';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 describe('NoteList', () => {
   async function renderComponent() {
@@ -43,11 +45,15 @@ describe('NoteList', () => {
       expect(noteItems.length).toBeGreaterThan(0);
     });
 
-    it.skip('should render the skeleton while the data is fetching', async () => {
+    it('should render the skeleton while the data is fetching', async () => {
       // Arrange
-      vi.mocked(getNotes).mockImplementation(() => {
-        return new Promise(() => {});
-      });
+      worker.use(
+        http.get(API_URL, async () => {
+          await delay();
+
+          return HttpResponse.json([]);
+        })
+      );
       const { getByRole } = await renderComponent();
 
       // Act
@@ -57,9 +63,12 @@ describe('NoteList', () => {
       await expect.element(skeleton).toBeInTheDocument();
     });
 
-    it.skip('should display the error message while the api function throw error', async () => {
-      const errorMessage = 'Error from vitest';
-      vi.mocked(getNotes).mockRejectedValue(new Error(errorMessage));
+    it('should display the error message while the api function throw error', async () => {
+      worker.use(
+        http.get(API_URL, () => {
+          return HttpResponse.error();
+        })
+      );
       const { getByRole } = await renderComponent();
 
       const alert = getByRole('alert');
