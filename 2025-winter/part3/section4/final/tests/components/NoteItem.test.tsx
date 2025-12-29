@@ -4,10 +4,7 @@ import { render } from 'vitest-browser-react';
 import NoteItem from '@/components/NoteItem';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
-import { deleteNoteById } from '@/services/apiNote';
 import { userEvent } from 'vitest/browser';
-
-vi.mock('@/services/apiNote');
 
 describe('NoteItem', () => {
   const mockNote: Note = {
@@ -48,7 +45,6 @@ describe('NoteItem', () => {
   describe('user interaction', () => {
     it('should render the toaster after user click the delete button and success delete', async () => {
       // Arrange
-      vi.mocked(deleteNoteById).mockResolvedValue(mockNote);
       const { getByRole, getByText } = await renderComponent();
       const button = getByRole('button', {
         name: 'delete-button',

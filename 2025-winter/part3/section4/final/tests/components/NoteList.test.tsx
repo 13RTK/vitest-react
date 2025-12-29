@@ -24,10 +24,6 @@ describe('NoteList', () => {
     );
   }
 
-  beforeAll(() => worker.start());
-  afterEach(() => worker.resetHandlers());
-  afterAll(() => worker.stop());
-
   describe('render test', () => {
     it('should render list items with correct count', async () => {
       // Arrange
