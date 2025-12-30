@@ -74,8 +74,11 @@ function EditModal() {
         <div className="card bg-base-100 shrink-0">
           <div className="card-body">
             <fieldset className="fieldset">
-              <label className="label">Title</label>
+              <label htmlFor="title" className="label">
+                Title
+              </label>
               <input
+                id="title"
                 type="text"
                 className="input w-full"
                 placeholder="Enter the note title"
@@ -86,8 +89,11 @@ function EditModal() {
                 <div className="label text-red-600">Limit 35 Characters</div>
               </Activity>
 
-              <label className="label">Content</label>
+              <label htmlFor="content" className="label">
+                Content
+              </label>
               <textarea
+                id="content"
                 className="textarea w-full"
                 placeholder="Enter the note content"
                 value={content}
