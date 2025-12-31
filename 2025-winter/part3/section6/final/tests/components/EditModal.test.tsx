@@ -1,0 +1,47 @@
+import EditModal from '@/components/EditModal';
+import { openModal } from '@/hooks/useModel';
+import type { Note } from '@/types/Note';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
+import { Toaster } from 'sonner';
+import { render } from 'vitest-browser-react';
+
+describe('EditModal', () => {
+  const queryClient = new QueryClient();
+
+  async function renderComponent() {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <EditModal />
+        <Toaster />
+      </QueryClientProvider>
+    );
+  }
+
+  describe('render test', () => {
+    vi.mock('jotai', async () => {
+      const originalModule = await vi.importActual('jotai');
+
+      return { ...originalModule, useAtomValue: vi.fn() };
+    });
+
+    const mockedNoteForAdd: Note = {
+      id: 999,
+      title: 'test title',
+      content: 'test content',
+    };
+
+    it('should render the correct content for add form with default values', async () => {
+      vi.mocked(useAtomValue).mockReturnValue(mockedNoteForAdd);
+      const { getByLabelText } = await renderComponent();
+      openModal('my_modal_5');
+
+      const title = getByLabelText(/title/i);
+      const content = getByLabelText(/content/i);
+
+      await expect.element(title).toHaveValue(mockedNoteForAdd.title);
+      await expect.element(content).toHaveValue(mockedNoteForAdd.content);
+    });
+  });
+  // describe('user interaction', () => {});
+});
